@@ -1,0 +1,55 @@
+from IPython.display import display, clear_output
+import ipywidgets as widgets
+
+# Store products as a list of dictionaries
+products = []
+
+# Input fields
+name_input = widgets.Text(description="Name:")
+quantity_input = widgets.IntText(description="Qty:")
+price_input = widgets.FloatText(description="Price:")
+add_button = widgets.Button(description="Add Product", button_style='success')
+output = widgets.Output()
+
+def add_product(button):
+    name = name_input.value
+    quantity = quantity_input.value
+    price = price_input.value
+
+    if not name:
+        with output:
+            clear_output()
+            print("⚠️ Please enter a product name.")
+        return
+
+    products.append({'name': name, 'quantity': quantity, 'price': price})
+    
+    with output:
+        clear_output()
+        print(f"✅ Product '{name}' added successfully!")
+
+    name_input.value = ""
+    quantity_input.value = 0
+    price_input.value = 0.0
+
+def view_products(button):
+    with output:
+        clear_output()
+        if not products:
+            print("🛒 No products added yet.")
+            return
+
+        print("📋 Product List:")
+        print(f"{'Name':<15} {'Qty':<10} {'Price':<10}")
+        print("-" * 35)
+        for p in products:
+            print(f"{p['name']:<15} {p['quantity']:<10} ₹{p['price']:<10.2f}")
+
+# Buttons
+view_button = widgets.Button(description="View Products", button_style='info')
+add_button.on_click(add_product)
+view_button.on_click(view_products)
+
+# Layout
+form = widgets.VBox([name_input, quantity_input, price_input, add_button, view_button, output])
+display(form)
